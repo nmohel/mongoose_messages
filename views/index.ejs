@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Message Board</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            .title {
+                margin: 10px;
+                border-bottom: 1px solid black;
+            }
+            .post {
+                margin-left: 20px;
+                margin-bottom: 15px;
+            }
+            .comment {
+                margin-left: 15px;
+                margin-bottom: 10px;
+            }
+            label {
+                display: block;
+            }
+            .errors {
+                color: red;
+                margin: 3px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 class="title">The Dojo Message Board</h1>
+        <% if (errors) { %>
+            <h3>Sorry there was a problem loading all posts</h3>
+        <% } else { %>
+            <form action="/posts" method="post" class="post">
+                <div>
+                    <label for="writer">Name:</label>
+                    <input type="text" id="writer" name="writer">
+                </div>
+                <div>
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message"></textarea>
+                </div>
+                <% if (session.post_validations) { %>
+                    <% for (err of session.post_validations) { %>
+                        <p class="errors"><%= err %></p>
+                    <% } %>  
+                <% } %>
+                <button type="submit">Post Message</button>
+            </form>
+            <% for (post of all_posts) { %>
+                <div class="post">
+                    <h3>Name: <%= post.writer %></h3>
+                    <h3>Message: <%= post.message %></h3>
+                    <% for (c of post.comments) { %>
+                        <div class="comment">
+                            <p>Name: <%= c.writer %></p>
+                            <p>Comment: <%= c.message %></p>
+                        </div>
+                    <% } %>
+                    <form action="comments/<%= post._id %>" method="post" class="comment">
+                        <div>
+                            <label for="writer">Name:</label>
+                            <input type="text" id="writer" name="writer">
+                        </div>
+                        <div>
+                            <label for="message">Message:</label>
+                            <textarea id="message" name="message"></textarea>
+                        </div>
+                        <% if (session.comment_validations) { %>
+                            <% for (err of session.comment_validations) { %>
+                                <p class="errors"><%= err %></p>
+                            <% } %>  
+                        <% } %>
+                        <button type="submit">Post Comment</button>
+                    </form>
+                </div>
+            <% } %>
+        <% } %>
+    </body>
+</html>
